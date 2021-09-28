@@ -6,29 +6,22 @@
 
 ### 變分自編碼器(Variational autoencoder, VAE)由兩部分組成
 
-1. Encoder:
+1. Encoder(記為E):
 
-   將樣本空間X上某點x映射至編碼空間Z上對應的常態分佈。
-   $$
-   \mu_{Encoder(x)},log\sigma^2_{Encoder(x)} = Encoder(x)\qquad(1)Encoder將x映射成Z上常態分佈的參數\mu,log\sigma^2\\ 
-   N(\mu_{Encoder(x)},\sigma^2_{Encoder(x)})\qquad(2)換算成其常態分佈，參數為\mu,\sigma^2\\
-   \\
-   (以下Encoder以E代替)
-   $$
-   換句話說，Encoder可以把任意x映射成專屬於該x在Z上的常態分佈，如下示意圖:
-
-   <img src="C:\Users\Atlas\Dropbox\Portfolio\AutoEncoder_Practice\images\2584918486.png" alt="2584918486" style="zoom:50%;" />
-
-2. Decoder:
-
-   可以將編碼空間Z中的某點z映射回樣本空間X中的某點x
-   $$
-   \overline{x} = Decoder(z),\quad\overline{x}\in X\\
-   \\
-   (以下Decoder以D代替)
-   $$
+   將樣本空間X上某點x映射至編碼空間Z上對應的常態分佈。  
+   1. Encoder將x映射成Z上常態分佈的參數  
+   ![equation](https://latex.codecogs.com/svg.latex?\mu_{E(x)},log\sigma^2_{E(x)}=E(x))
    
+   2. 換算成其常態分佈，參數為![equation](https://latex.codecogs.com/svg.latex?\mu,log\sigma^2)  
+   ![equation](https://latex.codecogs.com/svg.latex?N(\mu_{E(x)},\sigma^2_{E(x)}))  
+     
+   3. 換句話說，Encoder可以把任意x映射成專屬於該x在Z上的常態分佈，如下示意圖:  
+   <img src="https://github.com/you-ming-hu/AutoEncoder_Practice/blob/master/images/%E7%9C%8B%E9%BD%8A%E6%A8%99%E6%BA%96%E5%B8%B8%E6%85%8B%E5%88%86%E4%BD%88.png" width="50%" height="50%">
 
+2. Decoder(記為D):
+
+   可以將編碼空間Z中的某點z映射回樣本空間X中的某點x  
+   ![equation](https://latex.codecogs.com/svg.latex?\overline{x}=D(z),\quad%20\overline{x}\in%20X)  
 ---
 
 ### 模型目標:
