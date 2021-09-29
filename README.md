@@ -113,57 +113,52 @@
   
   故總誤差函數除了重建誤差之外，還須包含資料點映射的分佈和標準常態分佈的差異，一個數學式正確，但邏輯及上不完整的想法，就是直接把兩者相加，於是整個模型改為以下:
   
-  ![equation](https://latex.codecogs.com/svg.latex?E^*,D^*=\underset{E,D}{\operatorname{argmin}}Expect_{x\sim%20Data}[ReconstructionError+KLDivergence])
+  ![equation](https://latex.codecogs.com/svg.latex?find\quad%20E^*,D^*)
   
-  ||x-D(\mu_{E(x)}+\sigma_{E(x)}*\epsilon)||^2
+  ![equation](https://latex.codecogs.com/svg.latex?E^*,D^*=\underset{E,D}{\operatorname{argmin}}Expect_{x\sim%20Data}[ReconstructError+KLD],\quad\epsilon\sim%20N(0,1))
   
-  \frac{1}{2}(-log\sigma_{E(x)}^2+\mu^2_{E(x)}+\sigma^2_{E(x)}-1)
+  ![equation](https://latex.codecogs.com/svg.latex?ReconstructError=||x-D(\mu_{E(x)}+\sigma_{E(x)}*\epsilon)||^2)
   
+  ![equation](https://latex.codecogs.com/svg.latex?KLD=\frac{1}{2}(-log\sigma_{E(x)}^2+\mu^2_{E(x)}+\sigma^2_{E(x)}-1))
   
-  ![equation](https://latex.codecogs.com/svg.latex?\epsilon\sim%20N(0,1))
-  
-  
-  $$
-  E^*,D^*=\underset{E,D}{\operatorname{argmin}} Expect_{x \sim Data}[
-  ||x-D(\mu_{E(x)}+\sigma_{E(x)} * \epsilon)||^2+\frac{1}{2}(-log\sigma_{E(x)}^2+\mu^2_{E(x)}+\sigma^2_{E(x)}-1)]\\
-  ,\epsilon\sim N(0,1)
-  $$
-  完整的推導參考《变分自编码器（二）：从贝叶斯观点出发 》
+  正確的推導參考《变分自编码器（二）：从贝叶斯观点出发 》，這邊解釋為甚麼重建誤差和KL Divergence可以相加。
 
-  另外對於分佈的限制並不僅限於使用KL Divergence，參考《变分自编码器（三）：这样做为什么能成？ 》，裡面提及靠單一採樣點估測其專屬常態分佈與標準常態分佈N(0,1)差異的方法，且與KL Divergence是等價的，其實現程式碼在參考文獻Convolutional Variational Autoencoder中Define the loss function and the optimizer部分可以找到。
+  另外對於分佈的限制並不僅限於使用KL Divergence，參考《变分自编码器（三）：这样做为什么能成？ 》，裡面提及靠單一採樣點估測其專屬常態分佈與標準常態分佈N(0,1)差異的方法，且與KL Divergence是等價的，實現程式碼在參考文獻Convolutional Variational Autoencoder中Define the loss function and the optimizer部分可以找到。
 
 - **多變數常態分佈**
 
   前述所有的公式僅提及單變數常態分佈，但實際上編碼空間Z是多維的，事實上VAE中的Encoder所映射的分佈是假定多維度且各維度獨立的常態分佈。
 
   **在各維度獨立的條件下，把各維度的KLDivergence總合起來即可，若非獨立則不能這樣算，原來的KLDivergence修改為下式**。
-  $$
-  KLDivergence(N(0,1),N(\mu_{E(x)},\sigma^2_{E(x)}))
-  =\frac{1}{2}\sum_{i=1}^{d}(-log\sigma_{E(x)i}^2+\mu^2_{E(x)i}+\sigma^2_{E(x)i}-1)\\
-  ,d=dim(EncodingSpace)
-  \\
-  \\
-  整體模型修改為:\\
-  find \quad E^*,D^*\\
-  E^*,D^*=\underset{E,D}{\operatorname{argmin}} Expect_{x \sim Data}[
-  ||x-D(\mu_{E(x)}+\sigma_{E(x)} * \epsilon)||^2+\frac{1}{2}\sum_{i=1}^{d}(-log\sigma_{E(x)i}^2+\mu^2_{E(x)i}+\sigma^2_{E(x)i}-1)]\\
-  ,\epsilon\sim N(0,1)\\
-  ,d=dim(EncodingSpace)
-  $$
   
+  ![equation](https://latex.codecogs.com/svg.latex?KLD(N(0,1),N(\mu_{E(x)},\sigma^2_{E(x)}))=\frac{1}{2}\sum_{i=1}^{d}(-log\sigma_{E(x)i}^2+\mu^2_{E(x)i}+\sigma^2_{E(x)i}-1))
+  
+  ![equation](https://latex.codecogs.com/svg.latex?,d=dim(EncodingSpace))
+  
+  整體模型修改為:
+  
+  ![equation](https://latex.codecogs.com/svg.latex?find\quad%20E^*,D^*)
+  
+  ![equation](https://latex.codecogs.com/svg.latex?E^*,D^*=\underset{E,D}{\operatorname{argmin}}Expect_{x\sim%20Data}[ReconstructError+KLD],\quad\epsilon\sim%20N(0,1))
+  
+  ![equation](https://latex.codecogs.com/svg.latex?ReconstructError=||x-D(\mu_{E(x)}+\sigma_{E(x)}*\epsilon)||^2)
+  
+  ![equation](https://latex.codecogs.com/svg.latex?KLD=\frac{1}{2}\sum_{i=1}^{d}(-log\sigma_{E(x)}^2+\mu^2_{E(x)}+\sigma^2_{E(x)}-1),\quad%20d=dim(EncodingSpace))
 
 ---
 
 ### 總結:
 
 完整的數學模型如下
-$$
-find \quad E^*,D^*\\
-E^*,D^*=\underset{E,D}{\operatorname{argmin}} Expect_{x \sim Data}[
-||x-D(\mu_{E(x)}+\sigma_{E(x)} * \epsilon)||^2+\frac{1}{2}\sum_{i=1}^{d}(-log\sigma_{E(x)i}^2+\mu^2_{E(x)i}+\sigma^2_{E(x)i}-1)]\\
-,\epsilon\sim N(0,1)\\
-,d=dim(EncodingSpace)
-$$
+
+![equation](https://latex.codecogs.com/svg.latex?find\quad%20E^*,D^*)
+  
+![equation](https://latex.codecogs.com/svg.latex?E^*,D^*=\underset{E,D}{\operatorname{argmin}}Expect_{x\sim%20Data}[ReconstructError+KLD],\quad\epsilon\sim%20N(0,1))
+  
+![equation](https://latex.codecogs.com/svg.latex?ReconstructError=||x-D(\mu_{E(x)}+\sigma_{E(x)}*\epsilon)||^2)
+  
+![equation](https://latex.codecogs.com/svg.latex?KLD=\frac{1}{2}\sum_{i=1}^{d}(-log\sigma_{E(x)}^2+\mu^2_{E(x)}+\sigma^2_{E(x)}-1),\quad%20d=dim(EncodingSpace))
+
 VAE即為Encoder與Decoder的組合。
 
 ---
