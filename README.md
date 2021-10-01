@@ -207,21 +207,21 @@ VAE即為Encoder與Decoder的組合。
 
    1. 使用原文的loss的結果
 
-      <img src="C:\Users\Atlas\Dropbox\Portfolio\AutoEncoder_Practice\images\encode-original.png" alt="encode-original" style="zoom:38%;" />
+      <img src="https://github.com/you-ming-hu/AutoEncoder_Practice/blob/master/images/encode-original.png" alt="encode-original" width="38%" height="38%"/>
 
    2. 使用單一點抽樣估計loss的結果
 
-      <img src="C:\Users\Atlas\Dropbox\Portfolio\AutoEncoder_Practice\images\encoding-resample.png" alt="encoding-resample" style="zoom:38%;" />
+      <img src="https://github.com/you-ming-hu/AutoEncoder_Practice/blob/master/images/encoding-resample.png" alt="encoding-resample" width="38%" height="38%" />
 
 2. **確實可以在編碼空間上看出房價的分布趨勢**，而該趨勢不是隨機分布，即便模型本身沒有使用過房價進行學習。合併利用訓練資料集(已去除SalePrice欄位)和驗證資料集的類別變項，經過VAE映射至編碼空間，繪製出映射在編碼空間上的散佈圖，並且依照房價對數值進行上色，查看是否呈現有意義的分布，結果如下圖。
 
    1. 使用原文的loss的結果
 
-      ![train-original](C:\Users\Atlas\Dropbox\Portfolio\AutoEncoder_Practice\images\train-original.png)
+      ![train-original](https://github.com/you-ming-hu/AutoEncoder_Practice/blob/master/images/train-original.png)
 
    2. 使用單一點抽樣估計loss的結果
 
-      ![train-resample](C:\Users\Atlas\Dropbox\Portfolio\AutoEncoder_Practice\images\train-resample.png)
+      ![train-resample](https://github.com/you-ming-hu/AutoEncoder_Practice/blob/master/images/train-resample.png)
 
 ## 訓練心得:
 
