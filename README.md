@@ -156,11 +156,11 @@
 完整的數學模型如下
 
 ![equation](https://latex.codecogs.com/svg.latex?\color{blue}find\quad%20E^*,D^*)
-  
+
 ![equation](https://latex.codecogs.com/svg.latex?\color{blue}E^*,D^*=\underset{E,D}{\operatorname{argmin}}Expect_{x\sim%20Data}[ReconstructError+KLD],\quad\epsilon\sim%20N(0,1))
-  
+
 ![equation](https://latex.codecogs.com/svg.latex?\color{blue}ReconstructError=||x-D(\mu_{E(x)}+\sigma_{E(x)}*\epsilon)||^2)
-  
+
 ![equation](https://latex.codecogs.com/svg.latex?\color{blue}KLD=\frac{1}{2}\sum_{i=1}^{d}(-log\sigma_{E(x)}^2+\mu^2_{E(x)}+\sigma^2_{E(x)}-1),\quad%20d=dim(EncodingSpace))
 
 VAE即為Encoder與Decoder的組合。
@@ -203,13 +203,34 @@ VAE即為Encoder與Decoder的組合。
 
 ## 結論:
 
+1. **確實可以透過VAE進行壓縮再重建。**訓練過程中訓練資料集和驗證資料集的重構誤差均呈下降趨勢，訓練資料集重構誤差下降得知VAE可以在訓練資料集上進行壓縮與重建，另外驗證資料集重構誤差下降，可以排除訓VAE在練資料集上過度擬合的可能，確定利用此方法是有泛化能力的。訓練過程如下圖片，訓練資料集重構誤差(reconstruct)，驗證資料集重構誤差(val_reconstruct):
 
+   1. 使用原文的loss的結果
 
-## 心得:
+      <img src="C:\Users\Atlas\Dropbox\Portfolio\AutoEncoder_Practice\images\encode-original.png" alt="encode-original" style="zoom:38%;" />
 
+   2. 使用單一點抽樣估計loss的結果
 
+      <img src="C:\Users\Atlas\Dropbox\Portfolio\AutoEncoder_Practice\images\encoding-resample.png" alt="encoding-resample" style="zoom:38%;" />
+
+2. **確實可以在編碼空間上看出房價的分布趨勢**，而該趨勢不是隨機分布，即便模型本身沒有使用過房價進行學習。合併利用訓練資料集(已去除SalePrice欄位)和驗證資料集的類別變項，經過VAE映射至編碼空間，繪製出映射在編碼空間上的散佈圖，並且依照房價對數值進行上色，查看是否呈現有意義的分布，結果如下圖。
+
+   1. 使用原文的loss的結果
+
+      ![train-original](C:\Users\Atlas\Dropbox\Portfolio\AutoEncoder_Practice\images\train-original.png)
+
+   2. 使用單一點抽樣估計loss的結果
+
+      ![train-resample](C:\Users\Atlas\Dropbox\Portfolio\AutoEncoder_Practice\images\train-resample.png)
+
+## 訓練心得:
+
+1. 訓練的過程中，一開始所有的點都集中在中央，且房價也沒辦法呈現有意義的分布。原本以為是這方法本身不可行，或是Enoceder或Decoder不夠深沒辦法正確學習或是太深導致梯度消失，試圖調整Encoder和Decoder的深度、加入residual block、activation function避免使用sigmoid造成梯度消失、不同optimizer及learning rate，但是都沒有辦法達到理想的結果。後來想到，Loss = ReconstuctError + KLDivergence，雖然Loss內的兩項是不可獨立討論的，但我想到KLDivergence這項有可能對於所有分布向標準常態分布看齊N(0,1)過於強烈，導致所有的點集中在中央，所以我試著加入超參數去調整KLDivergence的比例，當係數約為0.005時會有比較好的結果。
+
+2. 使用兩種概念的loss function確實能達到類似的結果，可以說是在這個主題上兩者幾乎是等價的。
 
 ---
 
 ## 備註:
 
+本練習在設計的時候考慮到若此演算法應用到真實情境中，新的資料可能在某個類別變項有缺失值，可是訓練資料在該類別變相沒有缺失值，所以在進行one-hot-encoding的時候不會讓缺失值在新增一類，而是讓該類別變項轉換的one-hot-encoding內容均為0，也就是pd.get_dummies的參數dummy_na=False，這樣在為來發生這個問題的時候資料能夠相容。另外若未來經過one-hot-encoding新增了訓練資料集沒有的欄位，輸入時會先被丟棄，以維持原本模型能夠接受的輸入，待模型重新訓練後方能納入新的欄位。
